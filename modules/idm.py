@@ -17,16 +17,6 @@ CLSID_PATHS_32 = [r"HKCU\Software\Classes\CLSID"]
 CLSID_PATHS_64 = [r"HKCU\Software\Classes\Wow6432Node\CLSID"]
 
 # ---------- Helper Functions ----------
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
-def elevate():
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-    sys.exit()
-
 def get_user_sid():
     # Get SID of the current user (the one associated with explorer.exe)
     try:
@@ -82,6 +72,9 @@ def get_idm_path():
         pass
     return default_path if os.path.exists(default_path) else None
 
+def check_idm_installed():
+    return get_idm_path() is not None
+
 def kill_idm():
     subprocess.run("taskkill /f /im idman.exe", shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
@@ -93,11 +86,13 @@ def backup_clsid(backup_dir):
         clsid_key = r"HKCU\Software\Classes\CLSID"
     else:
         clsid_key = r"HKCU\Software\Classes\Wow6432Node\CLSID"
-    backup_file = os.path.join(backup_dir, f"_Backup_{clsid_key.replace('\\','_')}_{timestamp}.reg")
+    clsid_key_safe = clsid_key.replace('\\', '_')
+    backup_file = os.path.join(backup_dir, f"_Backup_{clsid_key_safe}_{timestamp}.reg")
     subprocess.run(f'reg export "{clsid_key}" "{backup_file}" /y', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     if sid and not is_hkcu_synced():
         clsid_key2 = rf"HKU\{sid}\Software\Classes\Wow6432Node\CLSID" if arch == "x64" else rf"HKU\{sid}\Software\Classes\CLSID"
-        backup_file2 = os.path.join(backup_dir, f"_Backup_{clsid_key2.replace('\\','_')}_{timestamp}.reg")
+        clsid_key2_safe = clsid_key2.replace('\\', '_')
+        backup_file2 = os.path.join(backup_dir, f"_Backup_{clsid_key2_safe}_{timestamp}.reg")
         subprocess.run(f'reg export "{clsid_key2}" "{backup_file2}" /y', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def is_hkcu_synced():
@@ -423,32 +418,3 @@ def freeze_trial():
     add_advintdriver_key()
     run_regscan_ps(sid, hkcu_synced, lock=True)   # Lock keys without activation
     print("Trial period freezed successfully.")
-
-def show_main_menu():
-    while True:
-        print("\n" + "="*60)
-        print("IDM Activation Script")
-        print("="*60)
-        print("1. Freeze Trial")
-        print("2. Activate")
-        print("3. Reset Activation / Trial")
-        print("4. Download IDM")
-        print("5. Help")
-        print("0. Exit")
-        choice = input("Enter your choice [1,2,3,4,5,0]: ").strip()
-        if choice == "1":
-            freeze_trial()
-        elif choice == "2":
-            activate_idm()
-        elif choice == "3":
-            reset_activation()
-        elif choice == "4":
-            os.startfile("https://www.internetdownloadmanager.com/download.html")
-        elif choice == "5":
-            os.startfile("https://github.com/WindowsAddict/IDM-Activation-Script")
-            os.startfile("https://massgrave.dev/idm-activation-script")
-        elif choice == "0":
-            break
-        else:
-            print("Invalid choice, try again.")
-        input("\nPress Enter to continue...")

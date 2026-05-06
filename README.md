@@ -103,4 +103,3 @@ This script is provided for **educational purposes only**. Activating commercial
 ## License
 
 Same as the original project – see [LICENSE](LICENSE) (if provided). Otherwise, feel free to use and modify for personal purposes.
-```

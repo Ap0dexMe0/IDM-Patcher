@@ -3,17 +3,11 @@ import subprocess
 import os
 from modules.args_parser import parse_args
 from modules.idm import (
-    is_admin, elevate, check_idm_installed, reset_activation, activate_idm,
-    freeze_trial, show_main_menu
+    reset_activation, activate_idm, freeze_trial
 )
 
 def main():
     args = parse_args(sys.argv[1:])
-
-    # Re-launch with admin rights if needed
-    if not is_admin():
-        elevate()
-        return
 
     # Perform requested actions
     if args['reset']:
@@ -23,7 +17,8 @@ def main():
     elif args['freeze']:
         freeze_trial()
     else:
-        show_main_menu()
+        print("No action specified. Use --active, --freeze, or --reset")
+        print("Run 'main.py --help' for more information.")
 
 if __name__ == "__main__":
     main()

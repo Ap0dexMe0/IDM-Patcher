@@ -115,30 +115,6 @@
         "documentation": {}
     },
     {
-        "label": "is_admin",
-        "importPath": "modules.idm",
-        "description": "modules.idm",
-        "isExtraImport": true,
-        "detail": "modules.idm",
-        "documentation": {}
-    },
-    {
-        "label": "elevate",
-        "importPath": "modules.idm",
-        "description": "modules.idm",
-        "isExtraImport": true,
-        "detail": "modules.idm",
-        "documentation": {}
-    },
-    {
-        "label": "check_idm_installed",
-        "importPath": "modules.idm",
-        "description": "modules.idm",
-        "isExtraImport": true,
-        "detail": "modules.idm",
-        "documentation": {}
-    },
-    {
         "label": "reset_activation",
         "importPath": "modules.idm",
         "description": "modules.idm",
@@ -163,38 +139,12 @@
         "documentation": {}
     },
     {
-        "label": "show_main_menu",
-        "importPath": "modules.idm",
-        "description": "modules.idm",
-        "isExtraImport": true,
-        "detail": "modules.idm",
-        "documentation": {}
-    },
-    {
         "label": "parse_args",
         "kind": 2,
         "importPath": "modules.args_parser",
         "description": "modules.args_parser",
         "peekOfCode": "def parse_args(argv):\n    parser = argparse.ArgumentParser(description=\"IDM Activation Script\")\n    parser.add_argument(\"--active\", action=\"store_true\", help=\"Activate IDM\")\n    parser.add_argument(\"--freeze\", action=\"store_true\", help=\"Freeze trial period\")\n    parser.add_argument(\"--reset\", action=\"store_true\", help=\"Reset activation / trial\")\n    args = parser.parse_args(argv)\n    return {\n        \"activate\": args.active,\n        \"freeze\": args.freeze,\n        \"reset\": args.reset",
         "detail": "modules.args_parser",
-        "documentation": {}
-    },
-    {
-        "label": "is_admin",
-        "kind": 2,
-        "importPath": "modules.idm",
-        "description": "modules.idm",
-        "peekOfCode": "def is_admin():\n    try:\n        return ctypes.windll.shell32.IsUserAnAdmin()\n    except:\n        return False\ndef elevate():\n    ctypes.windll.shell32.ShellExecuteW(None, \"runas\", sys.executable, \" \".join(sys.argv), None, 1)\n    sys.exit()\ndef get_user_sid():\n    # Get SID of the current user (the one associated with explorer.exe)",
-        "detail": "modules.idm",
-        "documentation": {}
-    },
-    {
-        "label": "elevate",
-        "kind": 2,
-        "importPath": "modules.idm",
-        "description": "modules.idm",
-        "peekOfCode": "def elevate():\n    ctypes.windll.shell32.ShellExecuteW(None, \"runas\", sys.executable, \" \".join(sys.argv), None, 1)\n    sys.exit()\ndef get_user_sid():\n    # Get SID of the current user (the one associated with explorer.exe)\n    try:\n        output = subprocess.check_output(\n            ['powershell', '-Command', \n             \"$explorerProc = Get-Process -Name explorer | Where-Object {$_.SessionId -eq (Get-Process -Id $pid).SessionId} | Select-Object -First 1; \"\n             \"$sid = (gwmi -Query ('Select * From Win32_Process Where ProcessID=' + $explorerProc.Id)).GetOwnerSid().Sid; $sid\"],",
-        "detail": "modules.idm",
         "documentation": {}
     },
     {
@@ -225,6 +175,15 @@
         "documentation": {}
     },
     {
+        "label": "check_idm_installed",
+        "kind": 2,
+        "importPath": "modules.idm",
+        "description": "modules.idm",
+        "peekOfCode": "def check_idm_installed():\n    return get_idm_path() is not None\ndef kill_idm():\n    subprocess.run(\"taskkill /f /im idman.exe\", shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)\ndef backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = time.strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"",
+        "detail": "modules.idm",
+        "documentation": {}
+    },
+    {
         "label": "kill_idm",
         "kind": 2,
         "importPath": "modules.idm",
@@ -238,7 +197,7 @@
         "kind": 2,
         "importPath": "modules.idm",
         "description": "modules.idm",
-        "peekOfCode": "def backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = time.strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"\n    else:\n        clsid_key = r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"\n    backup_file = os.path.join(backup_dir, f\"_Backup_{clsid_key.replace('\\\\','_')}_{timestamp}.reg\")\n    subprocess.run(f'reg export \"{clsid_key}\" \"{backup_file}\" /y', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)",
+        "peekOfCode": "def backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = time.strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"\n    else:\n        clsid_key = r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"\n    clsid_key_safe = clsid_key.replace('\\\\', '_')\n    backup_file = os.path.join(backup_dir, f\"_Backup_{clsid_key_safe}_{timestamp}.reg\")",
         "detail": "modules.idm",
         "documentation": {}
     },
@@ -324,20 +283,11 @@
         "documentation": {}
     },
     {
-        "label": "show_main_menu",
-        "kind": 2,
-        "importPath": "modules.idm",
-        "description": "modules.idm",
-        "peekOfCode": "def show_main_menu():\n    while True:\n        print(\"\\n\" + \"=\"*60)\n        print(\"IDM Activation Script\")\n        print(\"=\"*60)\n        print(\"1. Freeze Trial\")\n        print(\"2. Activate\")\n        print(\"3. Reset Activation / Trial\")\n        print(\"4. Download IDM\")\n        print(\"5. Help\")",
-        "detail": "modules.idm",
-        "documentation": {}
-    },
-    {
         "label": "IAS_VER",
         "kind": 5,
         "importPath": "modules.idm",
         "description": "modules.idm",
-        "peekOfCode": "IAS_VER = \"1.2\"\nCLSID_PATHS_32 = [r\"HKCU\\Software\\Classes\\CLSID\"]\nCLSID_PATHS_64 = [r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"]\n# ---------- Helper Functions ----------\ndef is_admin():\n    try:\n        return ctypes.windll.shell32.IsUserAnAdmin()\n    except:\n        return False\ndef elevate():",
+        "peekOfCode": "IAS_VER = \"1.2\"\nCLSID_PATHS_32 = [r\"HKCU\\Software\\Classes\\CLSID\"]\nCLSID_PATHS_64 = [r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"]\n# ---------- Helper Functions ----------\ndef get_user_sid():\n    # Get SID of the current user (the one associated with explorer.exe)\n    try:\n        output = subprocess.check_output(\n            ['powershell', '-Command', \n             \"$explorerProc = Get-Process -Name explorer | Where-Object {$_.SessionId -eq (Get-Process -Id $pid).SessionId} | Select-Object -First 1; \"",
         "detail": "modules.idm",
         "documentation": {}
     },
@@ -346,7 +296,7 @@
         "kind": 5,
         "importPath": "modules.idm",
         "description": "modules.idm",
-        "peekOfCode": "CLSID_PATHS_32 = [r\"HKCU\\Software\\Classes\\CLSID\"]\nCLSID_PATHS_64 = [r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"]\n# ---------- Helper Functions ----------\ndef is_admin():\n    try:\n        return ctypes.windll.shell32.IsUserAnAdmin()\n    except:\n        return False\ndef elevate():\n    ctypes.windll.shell32.ShellExecuteW(None, \"runas\", sys.executable, \" \".join(sys.argv), None, 1)",
+        "peekOfCode": "CLSID_PATHS_32 = [r\"HKCU\\Software\\Classes\\CLSID\"]\nCLSID_PATHS_64 = [r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"]\n# ---------- Helper Functions ----------\ndef get_user_sid():\n    # Get SID of the current user (the one associated with explorer.exe)\n    try:\n        output = subprocess.check_output(\n            ['powershell', '-Command', \n             \"$explorerProc = Get-Process -Name explorer | Where-Object {$_.SessionId -eq (Get-Process -Id $pid).SessionId} | Select-Object -First 1; \"\n             \"$sid = (gwmi -Query ('Select * From Win32_Process Where ProcessID=' + $explorerProc.Id)).GetOwnerSid().Sid; $sid\"],",
         "detail": "modules.idm",
         "documentation": {}
     },
@@ -355,7 +305,7 @@
         "kind": 5,
         "importPath": "modules.idm",
         "description": "modules.idm",
-        "peekOfCode": "CLSID_PATHS_64 = [r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"]\n# ---------- Helper Functions ----------\ndef is_admin():\n    try:\n        return ctypes.windll.shell32.IsUserAnAdmin()\n    except:\n        return False\ndef elevate():\n    ctypes.windll.shell32.ShellExecuteW(None, \"runas\", sys.executable, \" \".join(sys.argv), None, 1)\n    sys.exit()",
+        "peekOfCode": "CLSID_PATHS_64 = [r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"]\n# ---------- Helper Functions ----------\ndef get_user_sid():\n    # Get SID of the current user (the one associated with explorer.exe)\n    try:\n        output = subprocess.check_output(\n            ['powershell', '-Command', \n             \"$explorerProc = Get-Process -Name explorer | Where-Object {$_.SessionId -eq (Get-Process -Id $pid).SessionId} | Select-Object -First 1; \"\n             \"$sid = (gwmi -Query ('Select * From Win32_Process Where ProcessID=' + $explorerProc.Id)).GetOwnerSid().Sid; $sid\"],\n            stderr=subprocess.DEVNULL, text=True",
         "detail": "modules.idm",
         "documentation": {}
     },
@@ -436,7 +386,7 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    args = parse_args(sys.argv[1:])\n    # Re-launch with admin rights if needed\n    if not is_admin():\n        elevate()\n        return\n    # Perform requested actions\n    if args['reset']:\n        reset_activation()\n    elif args['activate']:",
+        "peekOfCode": "def main():\n    args = parse_args(sys.argv[1:])\n    # Perform requested actions\n    if args['reset']:\n        reset_activation()\n    elif args['activate']:\n        activate_idm()\n    elif args['freeze']:\n        freeze_trial()\n    else:",
         "detail": "main",
         "documentation": {}
     }
