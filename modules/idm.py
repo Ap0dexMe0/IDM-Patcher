@@ -10,6 +10,7 @@ import time
 import tempfile
 import urllib.request
 from pathlib import Path
+from datetime import datetime
 
 # Constants
 IAS_VER = "1.2"
@@ -80,7 +81,7 @@ def kill_idm():
 
 def backup_clsid(backup_dir):
     sid = get_user_sid()
-    timestamp = time.strftime("%Y%m%d-%H%M%S%f")[:-3]
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S%f")[:-3]
     arch = get_architecture()
     if arch == "x86":
         clsid_key = r"HKCU\Software\Classes\CLSID"
