@@ -107,6 +107,14 @@
         "documentation": {}
     },
     {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
         "label": "parse_args",
         "importPath": "modules.args_parser",
         "description": "modules.args_parser",
@@ -179,7 +187,7 @@
         "kind": 2,
         "importPath": "modules.idm",
         "description": "modules.idm",
-        "peekOfCode": "def check_idm_installed():\n    return get_idm_path() is not None\ndef kill_idm():\n    subprocess.run(\"taskkill /f /im idman.exe\", shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)\ndef backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = time.strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"",
+        "peekOfCode": "def check_idm_installed():\n    return get_idm_path() is not None\ndef kill_idm():\n    subprocess.run(\"taskkill /f /im idman.exe\", shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)\ndef backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = datetime.now().strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"",
         "detail": "modules.idm",
         "documentation": {}
     },
@@ -188,7 +196,7 @@
         "kind": 2,
         "importPath": "modules.idm",
         "description": "modules.idm",
-        "peekOfCode": "def kill_idm():\n    subprocess.run(\"taskkill /f /im idman.exe\", shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)\ndef backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = time.strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"\n    else:\n        clsid_key = r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"",
+        "peekOfCode": "def kill_idm():\n    subprocess.run(\"taskkill /f /im idman.exe\", shell=True, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)\ndef backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = datetime.now().strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"\n    else:\n        clsid_key = r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"",
         "detail": "modules.idm",
         "documentation": {}
     },
@@ -197,7 +205,7 @@
         "kind": 2,
         "importPath": "modules.idm",
         "description": "modules.idm",
-        "peekOfCode": "def backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = time.strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"\n    else:\n        clsid_key = r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"\n    clsid_key_safe = clsid_key.replace('\\\\', '_')\n    backup_file = os.path.join(backup_dir, f\"_Backup_{clsid_key_safe}_{timestamp}.reg\")",
+        "peekOfCode": "def backup_clsid(backup_dir):\n    sid = get_user_sid()\n    timestamp = datetime.now().strftime(\"%Y%m%d-%H%M%S%f\")[:-3]\n    arch = get_architecture()\n    if arch == \"x86\":\n        clsid_key = r\"HKCU\\Software\\Classes\\CLSID\"\n    else:\n        clsid_key = r\"HKCU\\Software\\Classes\\Wow6432Node\\CLSID\"\n    clsid_key_safe = clsid_key.replace('\\\\', '_')\n    backup_file = os.path.join(backup_dir, f\"_Backup_{clsid_key_safe}_{timestamp}.reg\")",
         "detail": "modules.idm",
         "documentation": {}
     },
